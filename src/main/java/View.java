@@ -73,7 +73,7 @@ public class View extends JFrame implements KeyListener {
     public static void main(String[] args){
         int movementSpeed = 5;
         int rotationSpeed = 1;
-        List<Line> lines = readConfig("src/main/java/data");
+        List<Line> lines = readConfig(args[0]);
         Canvas canvas = new Canvas();
         Scene scene = new Scene();
         scene.setLines(lines);
