@@ -1,0 +1,12 @@
+# Default ignored files
+/shelf/
+/workspace.xml
+# custom ignored files
+.idea/
+lib/
+target/
+resources/
+*.aux
+*.out
+*.gz
+*.log

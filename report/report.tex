@@ -1,0 +1,175 @@
+\documentclass[11pt]{article}
+\usepackage{geometry}
+\geometry{a4paper, left=20mm, top=20mm}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage[T1]{fontenc}
+\usepackage{polski}
+\usepackage[utf8]{inputenc}
+
+\usepackage{xcolor}
+
+\title{Grafika Komputerowa Wirtualna Kamera}
+\author{Mikołaj Kubik}
+
+\begin{document}
+\maketitle
+\section{Analiza}
+\subsection{Translacja}
+\begin{equation}
+    T =
+    \begin{bmatrix}
+        1 & 0 & 0 & X\\
+        0 & 1 & 0 & Y\\
+        0 & 0 & 1 & Z\\
+        0 & 0 & 0 & 1
+    \end{bmatrix}
+    \cdot
+    \begin{bmatrix}
+        x\\
+        y\\
+        z\\
+        1
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        x + X\\
+        y + Y\\
+        z + Z\\
+        1
+    \end{bmatrix}
+\end{equation}
+gdzie:
+
+X, Y, Z - współrzędne kamery
+
+x, y, z - współrzędne transformowanego punktu
+
+\subsection{Skalowanie}
+\begin{equation}
+    S =
+    \begin{bmatrix}
+        SX & 0 & 0 & 0\\
+        0 & SY & 0 & 0\\
+        0 & 0 & 1 & 0\\
+        0 & 0 & 0 & 1
+    \end{bmatrix}
+    \cdot
+    \begin{bmatrix}
+        x\\
+        y\\
+        z\\
+        1
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        SX \cdot x\\
+        SY \cdot y\\
+        z\\
+        1
+    \end{bmatrix}
+\end{equation}
+gdzie:
+
+SX, SY - współczynniki powiększenia względem osi X i Y, SZ w tym przypadku wynosi 1
+
+x, y, z - współrzędne transformowanego punktu
+
+\subsection{Rotacje}
+\subsubsection{względem osi X}
+\begin{equation}
+    \begin{bmatrix}
+        1 & 0 & 0 & 0\\
+        0 & cos \alpha & -sin \alpha & 0\\
+        0 & sin \alpha & cos \alpha & 0\\
+        0 & 0 & 0 & 1
+    \end{bmatrix}
+    \cdot
+    \begin{bmatrix}
+        x\\
+        y\\
+        z\\
+        1
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        x\\
+        cos \alpha \cdot y - sin \alpha \cdot z\\
+        sin \alpha \cdot y + cos \alpha \cdot z\\
+        1
+    \end{bmatrix}
+\end{equation}
+gdzie:
+
+$\alpha$ - rotacja kamery względem osi X
+
+x, y, z - współrzędne transformowanego punktu
+
+\subsubsection{względem osi Y}
+\begin{equation}
+    \begin{bmatrix}
+        cos \beta & 0 & sin \beta & 0\\
+        0 & 1 & 0 & 0\\
+        -sin \beta & 0 & cos \beta & 0\\
+        0 & 0 & 0 & 1
+    \end{bmatrix}
+    \cdot
+    \begin{bmatrix}
+        x\\
+        y\\
+        z\\
+        1
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        cos \beta \cdot x + sin \beta \cdot z\\
+        y\\
+        -sin \beta \cdot x + cos \beta \cdot z\\
+        1
+    \end{bmatrix}
+\end{equation}
+gdzie:
+
+$\beta$ - rotacja kamery względem osi Y
+
+x, y, z - współrzędne transformowanego punktu
+
+\subsubsection{względem osi Z}
+\begin{equation}
+    \begin{bmatrix}
+        cos \gamma & -sin \gamma & 0 & 0\\
+        sin \gamma & cos \gamma & 0 & 0\\
+        0 & 0 & 1 & 0\\
+        0 & 0 & 0 & 1
+    \end{bmatrix}
+    \cdot
+    \begin{bmatrix}
+        x\\
+        y\\
+        z\\
+        1
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        cos \gamma \cdot x - sin \gamma \cdot y\\
+        sin \gamma \cdot x + cos \gamma \cdot y\\
+        z\\
+        1
+    \end{bmatrix}
+\end{equation}
+gdzie:
+
+$\gamma$ - rotacja kamery względem osi X
+
+x, y, z - współrzędne transformowanego punktu
+\subsection{Notatki}
+\begin{equation}
+    \begin{bmatrix}
+        cos \beta \cdot cos \gamma & -cos \beta \cdot sin \gamma & sin \beta & 0\\
+        sin \alpha \cdot sin \beta \cdot cos \gamma + cos \alpha \cdot sin\gamma& -sin \alpha \cdot sin \beta \cdot sin \gamma + cos \alpha \cdot cos \gamma & -sin \alpha \cdot cos \beta & 0\\
+        -cos \alpha \cdot sin \beta \cdot cos \gamma + sin \alpha \cdot sin \gamma & cos \alpha \cdot sin \beta \cdot sin \gamma + sin \alpha \cdot cos \gamma & cos \alpha \cdot cos \beta & 0\\
+        0 & 0 & 0 & 1\\
+    \end{bmatrix}
+\end{equation}
+\end{document}
