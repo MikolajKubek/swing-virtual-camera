@@ -180,6 +180,20 @@ $\gamma$ - rotacja kamery względem osi X
 
 x, y, z - współrzędne transformowanego punktu
 
+\section{Dodatkowe obserwacje}
+Po rzutowaniu trójwymiarowej sceny na dwywymiarową perspektywę kamery trzecia współrzędna 
+jest różna od 1. Przez jej wartość należy przeskalować współrzędne x i y wyświetlanej 
+perspektywy.
+Jeżeli elementy sceny znajdują się poza polem widzenia kamery ta współrzędna skali przyjmuje wartości ujemne
+co powoduje pojawianie się niechcianych "artefaktów". Aby temu zapobiec ujemna trzecia współrzędna
+zamieniana jest na 1.
+
+\begin{figure}
+    \caption{Centrum sceny przed i po uwzględnieniu występowania 
+    ujemnych wartości trzeciej współrzędnej wektora po transformacji}
+    \includegraphics[width=8.5cm]{8.png}
+    \includegraphics[width=8.5cm]{9.png}
+\end{figure}
 \section{Przykładowe wywołania}
 \includegraphics[width=8.5cm]{1.png}
 \includegraphics[width=8.5cm]{2.png}
@@ -234,4 +248,9 @@ które wierzchołki połączyć odcinkiem.
         \item Powiększenie: 1
         \item Pomniejszenie: 2
     \end{itemize}
+\section{Wnioski}
+Praca nad projektem pokazała mi, że generowanie grafiki trójwymiarowej jest zagadnieniem złożonym 
+zarówno pod kątem algorytmicznym jak i optymalizacyjnym oraz zaznajomiła mnie z podstawami
+samego procesu generowania grafiki. Wykorzystanie zapisów oraz obliczeń
+macierzowych znacznie ułatwia przedstawienie oraz zrozumienie i implementację problemu.
 \end{document}
