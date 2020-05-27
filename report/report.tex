@@ -15,8 +15,19 @@
 
 \begin{document}
 \maketitle
-\section{Analiza}
+\section{Wstęp}
+Celem projektu była implementacja wirtualnej kamery, pozwalającej na 
+obserwację trójwymiarowych obiektów. Kamera posiada możliwość poruszania się 
+i obracania w trzech osiach oraz zmiany przybliżenia. Kod źródłowy programu oraz plik jar znajdują się w repozytorium \href{https://github.com/MikolajKubek/swing-virtual-camera}{\color{blue}GitHub}.
+\section{Zmiany względem wstępnego planu}
+Względem pierwotnego planu zmieniła się technologia - wykorzystałem
+język java i bibliotekę swing zamiast c++ z sfml, ponieważ okazało się, 
+że różnica wydajnościowa między tymi narzędziami nie wpływa w widoczny sposób na działanie programu.
+\section{Analiza zagadnienia}
+Program przechowuje scenę jako listę odcinków. Aby dokonać projekcji 
+sceny na perspektywę kamery z każdego punktu tworzona jest macierz, na której wykonywane są następujące operacje.
 \subsection{Translacja}
+Transformacja sceny odpowiadająca za pozorną zmianę położenia kamery.
 \begin{equation}
     T =
     \begin{bmatrix}
@@ -42,11 +53,15 @@
 \end{equation}
 gdzie:
 
-X, Y, Z - współrzędne kamery
+X, Y, Z - wektor translacji
 
 x, y, z - współrzędne transformowanego punktu
 
 \subsection{Skalowanie}
+Transformacja sceny odpowiadająca za przybliżanie i oddalanie. 
+Zastosowanie tego równania macierzowego pozwala na niezależne skalowanie 
+projekcji w płaszczyznach każdej z trzech osi, jednak aby zachować zachowanie zbliżone
+do prawdziwej kamery ograniczyłem się do skalowania względem osi x i y jednocześnie.
 \begin{equation}
     S =
     \begin{bmatrix}
@@ -77,6 +92,7 @@ SX, SY - współczynniki powiększenia względem osi X i Y, SZ w tym przypadku w
 x, y, z - współrzędne transformowanego punktu
 
 \subsection{Rotacje}
+Transformacje sceny odpowiadające za pozorne obracanie kamery.
 \subsubsection{względem osi X}
 \begin{equation}
     \begin{bmatrix}
@@ -163,13 +179,49 @@ gdzie:
 $\gamma$ - rotacja kamery względem osi X
 
 x, y, z - współrzędne transformowanego punktu
-\subsection{Notatki}
-\begin{equation}
-    \begin{bmatrix}
-        cos \beta \cdot cos \gamma & -cos \beta \cdot sin \gamma & sin \beta & 0\\
-        sin \alpha \cdot sin \beta \cdot cos \gamma + cos \alpha \cdot sin\gamma& -sin \alpha \cdot sin \beta \cdot sin \gamma + cos \alpha \cdot cos \gamma & -sin \alpha \cdot cos \beta & 0\\
-        -cos \alpha \cdot sin \beta \cdot cos \gamma + sin \alpha \cdot sin \gamma & cos \alpha \cdot sin \beta \cdot sin \gamma + sin \alpha \cdot cos \gamma & cos \alpha \cdot cos \beta & 0\\
-        0 & 0 & 0 & 1\\
-    \end{bmatrix}
-\end{equation}
+
+\section{Przykładowe wywołania}
+\includegraphics[width=8.5cm]{1.png}
+\includegraphics[width=8.5cm]{2.png}
+\includegraphics[width=8.5cm]{3.png}
+\includegraphics[width=8.5cm]{4.png}
+\includegraphics[width=8.5cm]{5.png}
+\includegraphics[width=8.5cm]{7.png}
+Nagranie działania programu \href{https://youtu.be/Wztjls1sywg}{\color{blue}link}
+\section{Obsługa programu}
+\subsection{Wykorzystane narzędzia}
+Program korzysta z javy 8 oraz The Apache Commons Mathematics Library
+do obliczeń macierzowych.
+\subsection{Plik wejściowy}
+\subsection{Uruchomienie}
+    \begin{verbatim}
+        java -jar swing_virtual_camera.jar plik_konfiguracyjny
+    \end{verbatim}
+    Plik swing\_virtual\_camera.jar znajduje się w 
+    out/artifacts/swing\_virtual\_camera\_jar
+    względem głównego katalogu programu.
+\subsection{Sterowanie}
+\subsubsection{Poruszanie kamerą}
+    \begin{itemize}
+        \item Lewo: a
+        \item Prawo: d
+        \item Przód: w
+        \item Tył: s
+        \item Góra: space
+        \item Dół: ctrl
+    \end{itemize}
+\subsubsection{Obracanie kamery}
+    \begin{itemize}
+        \item Lewo: a
+        \item Prawo: d
+        \item Przód: w
+        \item Tył: s
+        \item Pochylenie w lewo: q
+        \item Pochylenie w prawo: e
+    \end{itemize}
+\subsubsection{Zoom}
+    \begin{itemize}
+        \item Powiększenie: 1
+        \item Pomniejszenie: 2
+    \end{itemize}
 \end{document}
