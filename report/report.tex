@@ -193,6 +193,16 @@ Nagranie działania programu \href{https://youtu.be/Wztjls1sywg}{\color{blue}lin
 Program korzysta z javy 8 oraz The Apache Commons Mathematics Library
 do obliczeń macierzowych.
 \subsection{Plik wejściowy}
+Opis sceny wczytywany jest z pliku zawierającego trójwymiarowe współrzędne wierzchołków, 
+które program indeksuje zaczynając od zera oraz pary indeksów informujących 
+które wierzchołki połączyć odcinkiem.
+    \begin{verbatim}
+        500 100 800
+        500 100 1000
+        500 -100 800
+        0 1
+        0 2
+    \end{verbatim}
 \subsection{Uruchomienie}
     \begin{verbatim}
         java -jar swing_virtual_camera.jar plik_konfiguracyjny
