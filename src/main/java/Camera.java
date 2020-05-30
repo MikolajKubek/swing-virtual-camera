@@ -72,60 +72,57 @@ public class Camera {
     }
 
     public void move(int x, int y, int z){
-        List<Line> transformedLines = new ArrayList<>();
+        List<Polygon> transformedPolygons = new ArrayList<>();
         RealMatrix translationMatrix = this.getTranslationMatrix(x, y, z);
-        for (Line line: this.scene.getLines()) {
-            Point3D newA = new Point3D(translationMatrix.multiply(line.a.toRealMatrix()));
-            Point3D newB = new Point3D(translationMatrix.multiply(line.b.toRealMatrix()));
-            transformedLines.add(new Line(newA, newB));
+        for (Polygon polygon : this.scene.getPolygons()) {
+            int pointsSize = polygon.getPointsSize();
+            Point3D[] points = new Point3D[pointsSize];
+            for (int i = 0; i < pointsSize; i++){
+                points[i] = new Point3D(translationMatrix.multiply(polygon.getPoint(i).toRealMatrix()));
+            }
+            transformedPolygons.add(new Polygon(polygon.getColor(), points));
         }
-        this.scene.setLines(transformedLines);
+        this.scene.setPolygons(transformedPolygons);
     }
 
     public void rotate(int rotationX, int rotationY, int rotationZ){
-        List<Line> transformedLines = new ArrayList<>();
+        List<Polygon> transformedPolygons = new ArrayList<>();
         RealMatrix rotationMatrix = this.getXRotationMatrix(rotationX).multiply(this.getYRotationMatrix(rotationY)).multiply(this.getZRotationMatrix(rotationZ));
-        for (Line line: this.scene.getLines()) {
-            Point3D newA = new Point3D(rotationMatrix.multiply(line.a.toRealMatrix()));
-            Point3D newB = new Point3D(rotationMatrix.multiply(line.b.toRealMatrix()));
-            transformedLines.add(new Line(newA, newB));
+        for (Polygon polygon : this.scene.getPolygons()) {
+            int pointsSize = polygon.getPointsSize();
+            Point3D[] points = new Point3D[pointsSize];
+            for (int i = 0; i < pointsSize; i++){
+                points[i] = new Point3D(rotationMatrix.multiply(polygon.getPoint(i).toRealMatrix()));
+            }
+            transformedPolygons.add(new Polygon(polygon.getColor(), points));
         }
-        this.scene.setLines(transformedLines);
+        this.scene.setPolygons(transformedPolygons);
     }
 
-    public List<Line> projectScene(int screenWidth, int screenHeight){
-        List<Line> transformedLines = new ArrayList<>();
+    public Scene projectScene(int offsetX, int offsetY){
+        List<Polygon> transformedPolygons = new ArrayList<>();
         RealMatrix focalMatrix = new Array2DRowRealMatrix(new double[][]{
                 {this.focalX, 0, 0, 0},
                 {0, this.focalY, 0, 0},
                 {0, 0, 1, 0},
                 {0, 0, 0, 1}
         });
-        for (Line line: this.scene.getLines()) {
-            RealMatrix aResult = focalMatrix.multiply(line.a.toRealMatrix());
-            RealMatrix bResult = focalMatrix.multiply(line.b.toRealMatrix());
-            double aScale = aResult.getEntry(2, 0);
-            double bScale = bResult.getEntry(2, 0);
-            if (aScale <= 0) {
-                aScale = 1;
+        for (Polygon polygon : this.scene.getPolygons()) {
+            int pointsSize = polygon.getPointsSize();
+            Point3D[] points = new Point3D[pointsSize];
+            for (int i = 0; i < pointsSize; i++){
+                RealMatrix result = focalMatrix.multiply(polygon.getPoint(i).toRealMatrix());
+                double scale = result.getEntry(2, 0);
+                scale = scale <= 0 ? 1 : scale;
+                points[i] = new Point3D(
+                        (result.getEntry(0, 0) / scale) + offsetX,
+                        (result.getEntry(1, 0) / scale) + offsetY,
+                        0
+                );
             }
-            if (bScale <= 0) {
-                bScale = 1;
-            }
-            Line newLine = new Line(
-                    new Point3D(
-                            aResult.getEntry(0, 0) / aScale,
-                            aResult.getEntry(1, 0) / aScale,
-                            0
-                    ),
-                    new Point3D(
-                            bResult.getEntry(0, 0) / bScale,
-                            bResult.getEntry(1, 0) / bScale,
-                            0
-                    ));
-            transformedLines.add(newLine);
+            transformedPolygons.add(new Polygon(polygon.getColor(), points));
         }
-        return transformedLines;
+        return new Scene(transformedPolygons);
     }
 
 

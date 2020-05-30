@@ -1,5 +1,6 @@
 import javax.swing.*;
 import javax.swing.Timer;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -8,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 
 public class View extends JFrame implements KeyListener {
@@ -35,30 +37,40 @@ public class View extends JFrame implements KeyListener {
         this.pressed.remove(keyEvent.getKeyCode());
     }
 
-    private static List<Line> readConfig(String configFile){
+    private static List<Polygon> readConfig(String configFile){
         HashMap<Integer, Point3D> map = new HashMap<>();
-        List<Line> lines = new ArrayList<>();
+        List<Polygon> polygons = new ArrayList<>();
+        Color color = new Color(0, 0 ,0);
         int index = 0;
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(configFile))){
             String line;
             while ((line = bufferedReader.readLine()) != null){
                 String[] splitLine = line.split(" ");
-                switch (splitLine.length){
-                    case 3:
-                        int x = Integer.parseInt(splitLine[0]);
-                        int y = Integer.parseInt(splitLine[1]);
-                        int z = Integer.parseInt(splitLine[2]);
+                switch (splitLine[0]){
+                    case "c":
+                        int r = Integer.parseInt(splitLine[1]);
+                        int g = Integer.parseInt(splitLine[2]);
+                        int b = Integer.parseInt(splitLine[3]);
+                        color = new Color(r, g, b);
+                        break;
+                    case "p":
+                        int x = Integer.parseInt(splitLine[1]);
+                        int y = Integer.parseInt(splitLine[2]);
+                        int z = Integer.parseInt(splitLine[3]);
                         map.put(index++, new Point3D(x, y, z));
                         break;
-                    case 2:
-                        int indexA = Integer.parseInt(splitLine[0]);
-                        int indexB = Integer.parseInt(splitLine[1]);
-                        if (map.containsKey(indexA) && map.containsKey(indexB)){
-                            lines.add(new Line(map.get(indexA), map.get(indexB)));
+                    case "i":
+                        Point3D[] points = new Point3D[splitLine.length - 1];
+                        for (int i = 0; i < splitLine.length - 1; i++){
+                            int key = Integer.parseInt(splitLine[i + 1]);
+                            if (map.containsKey(key)) {
+                                points[i] = map.get(key);
+                            }
+                            else {
+                                System.out.println("Index " + key + " not found");
+                            }
                         }
-                        else {
-                            System.out.println("One of indices " + indexA + " " + indexB + " not found");
-                        }
+                        polygons.add(new Polygon(color, points));
                         break;
                 }
             }
@@ -67,16 +79,16 @@ public class View extends JFrame implements KeyListener {
             System.out.println("File not found");
         }
 
-        return lines;
+        return polygons;
     }
 
     public static void main(String[] args){
         int movementSpeed = 5;
         int rotationSpeed = 1;
-        List<Line> lines = readConfig(args[0]);
+        List<Polygon> polygons = readConfig(args[0]);
         Canvas canvas = new Canvas();
         Scene scene = new Scene();
-        scene.setLines(lines);
+        scene.setPolygons(polygons);
         Camera camera = new Camera(scene);
         View view = new View("grak", 1000, 700);
 
@@ -130,14 +142,16 @@ public class View extends JFrame implements KeyListener {
                     }
                 }
                 if (view.pressed.size() > 0) {
-                    canvas.setLines(camera.projectScene(canvas.getWidth(), canvas.getHeight()));
+                    canvas.setScene(camera.projectScene(canvas.getWidth() / 2, canvas.getHeight() / 2));
                     canvas.repaint();
                 }
             }
         });
         view.getContentPane().add(canvas);
-        canvas.setLines(camera.projectScene(canvas.getWidth(), canvas.getHeight()));
+        canvas.setScene(camera.projectScene(canvas.getWidth() / 2, canvas.getHeight() / 2));
         canvas.paint(canvas.getGraphics());
+        canvas.setScene(camera.projectScene(canvas.getWidth() / 2, canvas.getHeight() / 2));
+        canvas.repaint();
 
         timer.start();
     }

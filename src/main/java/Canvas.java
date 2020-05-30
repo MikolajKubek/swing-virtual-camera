@@ -1,31 +1,35 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Canvas extends JComponent {
-    private List<Line> lines;
+    private Scene scene;
     private Color primaryColor = new Color(248, 23, 255);
     private Color secondaryColor = new Color(13, 1, 64);
 
     public Canvas(){
         super();
-        this.lines = new ArrayList<>();
+        this.scene = new Scene();
     }
 
-    public void setLines(List<Line> lines) {
-        this.lines = lines;
+    public void setScene(Scene scene) {
+        this.scene = scene;
     }
 
-    @Override
-    public void paint(Graphics g){
+    private void drawEdges(Graphics g){
         g.setColor(this.secondaryColor);
         g.fillRect(0, 0, this.getWidth(), this.getHeight());
         g.setColor(this.primaryColor);
-        int halfWidth = this.getWidth() / 2;
-        int halfHeight = this.getHeight() / 2;
-        for (Line line: this.lines) {
-            g.drawLine((int) line.a.x + halfWidth, (int) line.a.y + halfHeight, (int) line.b.x + halfWidth, (int) line.b.y + halfHeight);
+        this.scene.sortScene();
+        for (Polygon polygon : this.scene.getPolygons()) {
+            Polygon.AwtPolygonData awtPolygonData = polygon.getAwtPolygonData(0, 0);
+            g.setColor(polygon.getColor());
+            System.out.println(polygon.getColor());
+            g.drawPolygon(awtPolygonData.getXs(), awtPolygonData.getYs(), awtPolygonData.getSize());
         }
+    }
+
+    @Override
+    public synchronized void paint(Graphics graphics) {
+        drawEdges(graphics);
     }
 }

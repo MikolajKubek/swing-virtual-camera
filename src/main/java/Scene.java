@@ -1,22 +1,38 @@
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class Scene {
-    private List<Line> lines;
+    private List<Polygon> polygons;
 
     public Scene(){
-        this.lines = new ArrayList<>();
-        lines.add(new Line(0, 0, 0, 100, 100, 0));
-        lines.add(new Line(10, 0, 0, 110, 100, 0));
-        lines.add(new Line(20, 0, 0, 120, 100, 0));
-        lines.add(new Line(30, 0, 0, 130, 100, 0));
+        this.polygons = new ArrayList<>();
     }
 
-    public void setLines(List<Line> lines) {
-        this.lines = lines;
+    public Scene(List<Polygon> polygons){
+        this.polygons = polygons;
     }
 
-    public List<Line> getLines() {
-        return lines;
+    public void sortScene(){
+        for (Polygon polygon : this.polygons){
+            polygon.calculateWeight();
+        }
+
+        polygons.sort(new Comparator<Polygon>() {
+            @Override
+            public int compare(Polygon polygon, Polygon t1) {
+                if (t1.weight == polygon.weight) return 0;
+                else if (t1.weight > polygon.weight) return 1;
+                else return -1;
+            }
+        });
+    }
+
+    public void setPolygons(List<Polygon> polygons) {
+        this.polygons = polygons;
+    }
+
+    public List<Polygon> getPolygons() {
+        return polygons;
     }
 }
