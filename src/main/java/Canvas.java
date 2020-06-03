@@ -23,8 +23,7 @@ public class Canvas extends JComponent {
         for (Polygon polygon : this.scene.getPolygons()) {
             Polygon.AwtPolygonData awtPolygonData = polygon.getAwtPolygonData(0, 0);
             g.setColor(polygon.getColor());
-            System.out.println(polygon.getColor());
-            g.drawPolygon(awtPolygonData.getXs(), awtPolygonData.getYs(), awtPolygonData.getSize());
+            g.fillPolygon(awtPolygonData.getXs(), awtPolygonData.getYs(), awtPolygonData.getSize());
         }
     }
 

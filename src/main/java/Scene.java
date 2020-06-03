@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -13,11 +14,13 @@ public class Scene {
         this.polygons = polygons;
     }
 
-    public void sortScene(){
+    public void calculateWeights(){
         for (Polygon polygon : this.polygons){
             polygon.calculateWeight();
         }
+    }
 
+    public void sortScene(){
         polygons.sort(new Comparator<Polygon>() {
             @Override
             public int compare(Polygon polygon, Polygon t1) {
@@ -28,11 +31,11 @@ public class Scene {
         });
     }
 
-    public void setPolygons(List<Polygon> polygons) {
+    public synchronized void setPolygons(List<Polygon> polygons) {
         this.polygons = polygons;
     }
 
-    public List<Polygon> getPolygons() {
+    public synchronized List<Polygon> getPolygons() {
         return polygons;
     }
 }

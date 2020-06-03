@@ -13,6 +13,10 @@ public class Point3D {
     }
 
     public Point3D(RealMatrix matrix) {
+        set(matrix);
+    }
+
+    public void set(RealMatrix matrix) {
         if (matrix.getColumnDimension() == 1 && matrix.getRowDimension() >= 3){
             this.x = matrix.getEntry(0, 0);
             this.y = matrix.getEntry(1, 0);
@@ -32,10 +36,6 @@ public class Point3D {
                 {this.z},
                 {1}
         });
-    }
-
-    public boolean containsInfinity(){
-        return this.x == Double.NEGATIVE_INFINITY || this.x == Double.POSITIVE_INFINITY || this.y == Double.NEGATIVE_INFINITY || this.y == Double.POSITIVE_INFINITY || this.z == Double.NEGATIVE_INFINITY || this.z == Double.POSITIVE_INFINITY;
     }
 
     @Override

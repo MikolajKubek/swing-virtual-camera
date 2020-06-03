@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Polygon {
@@ -15,7 +16,9 @@ public class Polygon {
     public Polygon(Point3D... points){
         this.points = new ArrayList<>();
         for (Point3D point: points){
-            this.points.add(point);
+            if (point != null) {
+                this.points.add(point);
+            }
         }
     }
 
@@ -30,9 +33,8 @@ public class Polygon {
     public void calculateWeight() {
         double weight = 0;
         for (Point3D point: this.points){
-            weight += point.x * point.x + point.y * point.y;
+            weight += Math.sqrt(point.x * point.x + point.y * point.y + point.z * point.z);
         }
-
         this.weight = weight / this.points.size();
     }
 

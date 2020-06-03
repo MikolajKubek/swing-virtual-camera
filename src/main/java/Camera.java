@@ -2,6 +2,7 @@ import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.lang.Math;
 
@@ -71,7 +72,7 @@ public class Camera {
         });
     }
 
-    public void move(int x, int y, int z){
+    public synchronized void move(int x, int y, int z){
         List<Polygon> transformedPolygons = new ArrayList<>();
         RealMatrix translationMatrix = this.getTranslationMatrix(x, y, z);
         for (Polygon polygon : this.scene.getPolygons()) {
@@ -85,7 +86,7 @@ public class Camera {
         this.scene.setPolygons(transformedPolygons);
     }
 
-    public void rotate(int rotationX, int rotationY, int rotationZ){
+    public synchronized void rotate(int rotationX, int rotationY, int rotationZ){
         List<Polygon> transformedPolygons = new ArrayList<>();
         RealMatrix rotationMatrix = this.getXRotationMatrix(rotationX).multiply(this.getYRotationMatrix(rotationY)).multiply(this.getZRotationMatrix(rotationZ));
         for (Polygon polygon : this.scene.getPolygons()) {
@@ -99,7 +100,7 @@ public class Camera {
         this.scene.setPolygons(transformedPolygons);
     }
 
-    public Scene projectScene(int offsetX, int offsetY){
+    public synchronized Scene projectScene(int offsetX, int offsetY){
         List<Polygon> transformedPolygons = new ArrayList<>();
         RealMatrix focalMatrix = new Array2DRowRealMatrix(new double[][]{
                 {this.focalX, 0, 0, 0},
@@ -108,19 +109,25 @@ public class Camera {
                 {0, 0, 0, 1}
         });
         for (Polygon polygon : this.scene.getPolygons()) {
+            polygon.calculateWeight();
+            double weight = polygon.weight;
             int pointsSize = polygon.getPointsSize();
             Point3D[] points = new Point3D[pointsSize];
             for (int i = 0; i < pointsSize; i++){
                 RealMatrix result = focalMatrix.multiply(polygon.getPoint(i).toRealMatrix());
-                double scale = result.getEntry(2, 0);
-                scale = scale <= 0 ? 1 : scale;
-                points[i] = new Point3D(
-                        (result.getEntry(0, 0) / scale) + offsetX,
-                        (result.getEntry(1, 0) / scale) + offsetY,
-                        0
-                );
+                double z = result.getEntry(2, 0);
+                double scale = z <= 0 ? Double.MIN_VALUE : z;
+                if(z > -170) {
+                    points[i] = new Point3D(
+                            (result.getEntry(0, 0) / scale) + offsetX,
+                            (result.getEntry(1, 0) / scale) + offsetY,
+                            z
+                    );
+                }
             }
-            transformedPolygons.add(new Polygon(polygon.getColor(), points));
+            Polygon polygon1 = new Polygon(polygon.getColor(), points);
+            polygon1.weight = weight;
+            transformedPolygons.add(polygon1);
         }
         return new Scene(transformedPolygons);
     }
