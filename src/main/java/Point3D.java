@@ -38,6 +38,34 @@ public class Point3D {
         });
     }
 
+    public Point3D subtract(Point3D point3D){
+        return new Point3D(point3D.x - this.x, point3D.y - this.y, point3D.z - this.z);
+    }
+
+    public Point3D crossProduct(Point3D point3D){
+        double x = this.y * point3D.z - this.z * point3D.y;
+        double y = this.z * point3D.x - this.x * point3D.z;
+        double z = this.x * point3D.y - this.y * point3D.x;
+
+        return new Point3D(x, y, z);
+    }
+
+    public double dotProduct(Point3D point3D){
+        return this.x * point3D.x + this.y * point3D.y + this.z * point3D.z;
+    }
+
+    public boolean containsIllegalValues(){
+        return this.x == Double.POSITIVE_INFINITY ||
+                this.x == Double.NEGATIVE_INFINITY ||
+                this.x == Double.NaN ||
+                this.y == Double.POSITIVE_INFINITY ||
+                this.y == Double.NEGATIVE_INFINITY ||
+                this.y == Double.NaN ||
+                this.z == Double.POSITIVE_INFINITY ||
+                this.z == Double.NEGATIVE_INFINITY ||
+                this.z == Double.NaN;
+    }
+
     @Override
     public String toString() {
         return "Point3D{" +

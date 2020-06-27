@@ -30,6 +30,10 @@ public class Polygon {
         return this.color;
     }
 
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
     public void calculateWeight() {
         double weight = 0;
         for (Point3D point: this.points){
@@ -56,6 +60,13 @@ public class Polygon {
             ys[i++] = (int)point.y + offsetY;
         }
         return new AwtPolygonData(xs, ys, pointsSize);
+    }
+
+    public Plane getPlane(){
+        if (this.points.size() < 3){
+            throw new IllegalArgumentException();
+        }
+        return new Plane(this.points.get(0), this.points.get(1), this.points.get(2));
     }
 
     @Override

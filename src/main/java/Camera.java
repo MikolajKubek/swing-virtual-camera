@@ -11,6 +11,10 @@ public class Camera {
     private int focalX = 250;
     private int focalY = 250;
 
+    public int cameraX = 0;
+    public int cameraY = 0;
+    public int cameraZ = 0;
+
     public Camera(Scene scene) {
         this.scene = scene;
     }
@@ -73,6 +77,9 @@ public class Camera {
     }
 
     public synchronized void move(int x, int y, int z){
+        this.cameraX += x;
+        this.cameraY += y;
+        this.cameraZ += z;
         List<Polygon> transformedPolygons = new ArrayList<>();
         RealMatrix translationMatrix = this.getTranslationMatrix(x, y, z);
         for (Polygon polygon : this.scene.getPolygons()) {
@@ -108,7 +115,7 @@ public class Camera {
                 {0, 0, 1, 0},
                 {0, 0, 0, 1}
         });
-        for (Polygon polygon : this.scene.getPolygons()) {
+        for (Polygon polygon : this.scene.getSortedPolygons()) {
             polygon.calculateWeight();
             double weight = polygon.weight;
             int pointsSize = polygon.getPointsSize();
@@ -129,7 +136,9 @@ public class Camera {
             polygon1.weight = weight;
             transformedPolygons.add(polygon1);
         }
-        return new Scene(transformedPolygons);
+        Scene newScene = new Scene(transformedPolygons);
+        newScene.setCamera(this.cameraX, this.cameraY, this.cameraZ);
+        return newScene;
     }
 
 
